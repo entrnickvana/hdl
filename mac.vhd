@@ -22,7 +22,7 @@ architecture behav of mac is
   signal re_prod2 : u_sfixed(1 downto -30);
   signal im_prod1 : u_sfixed(1 downto -30);
   signal im_prod2 : u_sfixed(1 downto -30);
-  signal re_sum   : u_sfixed(2 downto -30)
+  signal re_sum   : u_sfixed(2 downto -30);
   signal im_sum   : u_sfixed(2 downto -30);
   
 begin

@@ -37,22 +37,20 @@ architecture behav of mac_top is
 
 
   type conv_array is array(0 to 31) of u_sfixed(0 downto -15);
-  type prod_array is array(0 to 31) of u_sfixed(0 downto -31);  
+  type prod_array is array(0 to 31) of u_sfixed(0 downto -15);  
   signal a_arr_re : conv_array := (others => (others => '0'));
   signal a_arr_im : conv_array := (others => (others => '0')); 
   signal b_arr_re : conv_array := (others => (others => '0'));    
   signal b_arr_im : conv_array := (others => (others => '0')); 
+
   signal s_arr_re : prod_array := (others => (others => '0'));   
   signal s_arr_im : prod_array := (others => (others => '0'));
-  type sum_array_16 is array(0 to 15) of u_sfixed(1 downto -15);  
-  type sum_array_8 is array(0 to 7) of u_sfixed(1 downto -15);    
-  type sum_array_4 is array(0 to 3) of u_sfixed(1 downto -15);      
+
+  type sum_array_16 is array(0 to 3) of u_sfixed(1 downto -15);  
   signal s16_re : sum_array_16 := (others => (others => '0'));
   signal s16_im : sum_array_16 := (others => (others => '0'));  
-  signal s8_re : sum_array_8 := (others => (others => '0'));  
-  signal s8_im : sum_array_8 := (others => (others => '0'));    
-  signal s4_re : sum_array_4 := (others => (others => '0'));    
-  signal s4_im : sum_array_4 := (others => (others => '0'));    
+  signal s8_re : sum_array_16 := (others => (others => '0'));  
+  signal s8_im : sum_array_16 := (others => (others => '0'));    
   signal s_out_re : u_sfixed(0 downto -15) := (others => '0');      
   signal s_out_im : u_sfixed(0 downto -15) := (others => '0');        
 
@@ -87,23 +85,21 @@ begin
       b_arr_re(0) <= b_re;
       b_arr_im(0) <= b_im;      
 
-      for ii in 0 to 15 loop
-        s16_re <= s_arr_re(ii) + s_arr_re(ii + 16);
-        s16_im <= s_arr_im(ii) + s_arr_im(ii + 16);        
+      for ii in 0 to 7 loop
+        s16_re(ii) <= s_arr_re(ii) + s_arr_re(ii + 8) + s_arr_re(ii + 16) + s_arr_re(ii + 24);
+        s16_im(ii) <= s_arr_im(ii) + s_arr_im(ii + 8) + s_arr_im(ii + 16) + s_arr_im(ii + 24);        
       end loop;
 
-      for kk in 0 to 7 loop
-        s8_re <= s16_re(kk) + s16_re(kk + 8);
-        s8_im <= s16_im(kk) + s16_im(kk + 8);        
+      for ii in 0 to 1 loop
+        s8_re(ii) <= s16_re(ii) + s16_re(ii + 2) + s16_re(ii + 4) + s16_re(ii + 6);
+        s8_im(ii) <= s16_im(ii) + s16_im(ii + 2) + s16_im(ii + 4) + s16_im(ii + 6);        
       end loop;
 
-      for jj in 0 to 7 loop
-        s4_re <= s8_re(jj) + s8_re(jj + 4);
-        s4_im <= s8_im(jj) + s8_im(jj + 4);        
-      end loop;
+      s_out_re <= s8_re(0) + s8_re(1);
+      s_out_im <= s8_im(0) + s8_im(1);      
 
-      s_out_re <= s4_re(0) + s4_re(1) + s4_re(2) + s4_re(3);
-      s_out_im <= s4_im(0) + s4_im(1) + s4_im(2) + s4_im(3);      
+      s_re <= s8_re(0) + s8_re(1);
+      s_im <= s8_im(0) + s8_im(1);      
 
     end if;
 
